@@ -29,7 +29,7 @@ function App() {
       },
     };
     const { data } = await axios.post(
-      `https://inshare-dev.herokuapp.com/api/files`,
+      `${process.env.REACT_APP_BASE_URL}/api/files`,
       formData,
       config
     );
