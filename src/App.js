@@ -1,6 +1,7 @@
 import './App.css';
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
 
 function App() {
   const [isDragging, setIsDragging] = useState(false);
@@ -12,8 +13,19 @@ function App() {
   const progressContainerRef = useRef();
   const sharingContainerRef = useRef();
   const fileURLInput = useRef();
-
+  const maxAllowedSize = 100 * 1024 * 1024; // 100MB
   const uploadFile = async () => {
+    if (fileRef.current.files.length > 1) {
+      fileRef.current.value = '';
+      toast.error('You can only upload one file at a time');
+      return;
+    }
+    console.log('Sol ', fileRef.current.files[0].size);
+    if (fileRef.current.files[0].size > maxAllowedSize) {
+      toast.error('File size is too large');
+      fileRef.current.value = '';
+      return;
+    }
     progressContainerRef.current.style.display = 'block';
     const file = fileRef.current.files[0];
     const formData = new FormData();
@@ -23,7 +35,6 @@ function App() {
       onUploadProgress: (e) => {
         const percent = Math.round((e.loaded / e.total) * 100);
         setProgressPercentValue(percent);
-        // console.log(percent);
         bgProgressRef.current.style.width = `${percent}%`;
         progressBarRef.current.style.transform = `scaleX(${percent / 100})`;
       },
@@ -44,6 +55,7 @@ function App() {
 
   return (
     <>
+      <Toaster />
       <img src="assets/logo.png" alt="Inshare logo" className="logo" />
       <div className="main-container">
         <section className="upload-container">
@@ -139,6 +151,7 @@ function App() {
                 onClick={() => {
                   fileURLInput.current.select();
                   document.execCommand('copy');
+                  toast.success('Link copied to clipboard');
                 }}
               />
             </div>

@@ -5,6 +5,11 @@
   --container-width: 500px;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: system-ui;
   background: var(--main-bg-color);
